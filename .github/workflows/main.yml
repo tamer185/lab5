@@ -1,0 +1,40 @@
+name: Lint (push / PR / schedule)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # POSIX cron: runs daily at 02:00 UTC (GitHub uses UTC)
+    - cron: '0 2 * * *'
+
+permissions:
+  contents: read
+
+jobs:
+  super-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Super-Linter
+        uses: super-linter/super-linter@v8.2.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_ALL_CODEBASE: true
+          DEFAULT_BRANCH: main
+          # Optional: Customize which linters to run
+          VALIDATE_HTML: true
+          VALIDATE_CSS: true
+          VALIDATE_JAVASCRIPT_ES: true
+          VALIDATE_JSON: true
+          VALIDATE_YAML: true
+          VALIDATE_MARKDOWN: true
+          VALIDATE_BASH: true
+          # Optional: Enable auto-fixing (requires write permissions)
+          # FIX_YAML: true
+          # FIX_JSON: true
